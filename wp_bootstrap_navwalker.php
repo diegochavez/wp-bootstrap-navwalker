@@ -100,15 +100,39 @@ class wp_bootstrap_navwalker extends Walker_Nav_Menu {
 			/*
 			 * Glyphicons
 			 * ===========
-			 * Since the the menu item is NOT a Divider or Header we check the see
-			 * if there is a value in the attr_title property. If the attr_title
-			 * property is NOT null we apply it as the class name for the glyphicon.
+			 * Since the the menu item is NOT a Divider or Header we check if the title attribue is a glyphicon
 			 */
 
-			if(! empty( $item->attr_title )){
+			if(preg_match("/glyphicon/i", $item->attr_title)){
 				$item_output .= '<a'. $attributes .'><span class="glyphicon ' . esc_attr( $item->attr_title ) . '"></span>&nbsp;';
-			} else {
-				$item_output .= '<a'. $attributes .'>';
+			
+			}
+
+			/*
+			 * Btn Classes
+			 * ============
+			 * Since the the menu item is NOT a Divider or Header we check if the title attribue is a btn-warning btn-success..
+			 * the output will be class="btn btn-warning"
+			 */
+			elseif(preg_match("/btn-/i", $item->attr_title)){ 
+			$item_output .= '<a'. $attributes .' class="btn ' . esc_attr( $item->attr_title ) . '">';
+			
+
+			}
+
+			/*
+			 * Custom Classes
+			 * ===============
+			 * Since the the menu item is NOT a Divider or Header we check if the title attribue is a "cclass" Custom Class 
+			 * you can add your classes "cclass-mycustomclass" the output is class="mycustomclass"
+			 */
+			elseif(preg_match("/cclass-/i", $item->attr_title)){ 
+				$itemclean = preg_replace("/cclass-/i", '', $item->attr_title);
+				$item_output .= '<a'. $attributes .' class="' . $itemclean  . '">';
+			}
+
+			else {
+				$item_output .= '<a  '. $attributes .'  >';
 			}
 			
 			$item_output .= $args->link_before . apply_filters( 'the_title', $item->title, $item->ID ) . $args->link_after;
